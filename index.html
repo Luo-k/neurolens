@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>昇腾AI神经网络可视化交互学习平台</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Ascend AI Teaching Lab</p>
+        <h1>昇腾AI神经网络可视化交互学习平台</h1>
+      </div>
+      <div class="status-strip" aria-label="平台状态">
+        <span>框架代码解析</span>
+        <span>底层结构可视化</span>
+        <span>输入输出追踪</span>
+        <span>教师可编辑讲解</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="control-panel" aria-label="模型控制面板">
+        <div class="panel-title">
+          <h2>教学模型</h2>
+          <p>把代码、结构、张量形状和最终输出放在同一张图里讲清楚。</p>
+        </div>
+
+        <div class="field-group">
+          <label for="frameworkSelect">代码框架</label>
+          <select id="frameworkSelect">
+            <option value="torch">PyTorch</option>
+            <option value="mindspore">MindSpore</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>典型网络</label>
+          <div class="segmented" role="group" aria-label="典型网络">
+            <button class="segment active" data-model="fnn">FNN 全连接</button>
+            <button class="segment" data-model="cnn">CNN 卷积</button>
+            <button class="segment" data-model="lstm">LSTM 序列</button>
+            <button class="segment" data-model="transformer">Transformer 注意力</button>
+          </div>
+        </div>
+
+        <div class="field-group compact-grid">
+          <div>
+            <label for="batchInput">Batch</label>
+            <input id="batchInput" type="number" min="1" max="256" value="32" />
+          </div>
+          <div>
+            <label for="inputSizeInput">输入尺寸</label>
+            <input id="inputSizeInput" type="text" value="784" />
+          </div>
+        </div>
+
+        <div class="metric-stack">
+          <div>
+            <strong id="layerCount">0</strong>
+            <span>识别层数</span>
+          </div>
+          <div>
+            <strong id="paramCount">0</strong>
+            <span>估算参数</span>
+          </div>
+          <div>
+            <strong id="outputCount">0</strong>
+            <span>输出类别/维度</span>
+          </div>
+        </div>
+
+        <button id="analyzeButton" class="primary-button" type="button">
+          <span class="button-icon">↻</span>
+          重新解析
+        </button>
+      </section>
+
+      <section class="editor-panel" aria-label="代码编辑区">
+        <div class="section-heading">
+          <div>
+            <h2>学生代码</h2>
+            <p>支持简单 FNN/CNN/LSTM/Transformer 网络搭建代码，重点服务初学者理解结构。</p>
+          </div>
+          <button id="formatButton" class="ghost-button" type="button">恢复示例</button>
+        </div>
+        <textarea id="codeInput" spellcheck="false" aria-label="神经网络代码"></textarea>
+        <div class="hint-row">
+          <span>代码变化后自动刷新结构图、形状表和讲解模板</span>
+          <span id="parseStatus">等待解析</span>
+        </div>
+      </section>
+
+      <section class="result-panel" aria-label="可视化结果">
+        <nav class="tabs" aria-label="结果视图">
+          <button class="tab active" data-tab="graph">底层结构</button>
+          <button class="tab" data-tab="table">层级表</button>
+          <button class="tab" data-tab="explain">教学讲解</button>
+        </nav>
+
+        <div class="tab-view active" id="graphView">
+          <div class="graph-toolbar">
+            <span id="modelTag">FNN 全连接分类</span>
+            <span id="shapeFlow">输入 -> 输出</span>
+          </div>
+          <div id="ioSummary" class="io-summary" aria-label="输入输出摘要"></div>
+          <input id="graphPan" class="graph-pan" type="range" min="0" max="100" value="0" aria-label="结构图横向滚动" />
+          <div class="graph-stage">
+            <svg id="networkGraph" role="img" aria-label="神经网络底层结构图"></svg>
+          </div>
+        </div>
+
+        <div class="tab-view" id="tableView">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>层类型</th>
+                  <th>核心参数</th>
+                  <th>输入形状</th>
+                  <th>输出形状</th>
+                  <th>教学提示</th>
+                </tr>
+              </thead>
+              <tbody id="layerTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-view" id="explainView">
+          <div class="explain-tools">
+            <button id="resetTeachingButton" class="ghost-button" type="button">恢复默认模板</button>
+          </div>
+          <div class="explain-layout editable">
+            <article>
+              <h2>教师讲解稿</h2>
+              <textarea id="teacherExplanation" class="teacher-textarea" spellcheck="false"></textarea>
+            </article>
+            <aside>
+              <h2>课堂引导问题</h2>
+              <textarea id="teacherQuestions" class="teacher-textarea question-editor" spellcheck="false"></textarea>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-note">
+      <span>本地位置：C:\Users\Administrator\Documents\Codex\2026-05-18\ai-ai-torch-mindspore-3-ai</span>
+      <span>案例类别：人工智能学习工具</span>
+      <span>演示重点：网络结构差异、张量流动、参数来源、输出含义</span>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
