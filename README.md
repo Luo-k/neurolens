@@ -5,7 +5,7 @@
 1. 下载本仓库
 2. 双击 `index.html`
 3. 粘贴 PyTorch 或 MindSpore 代码,右侧显示结构图
-零依赖,浏览器即用。
+4. 零依赖,浏览器即用。
 
 ## 支持
 FNN · CNN · LSTM · Transformer
